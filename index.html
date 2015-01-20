@@ -1,0 +1,79 @@
+
+<DOCTYPE html>
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+</head>
+<body>
+
+<script type="text/javascript" data-app-id="CLIENT_ID_HERE" src="https://c64.assets-yammer.com/assets/platform_js_sdk.js"></script>
+
+<script type="text/javascript">
+
+ function getCurrentUserFromYammer() {
+		yam.platform.request({
+		// yam.request({
+			url: "https://api.yammer.com/api/v1/users/current.json", //this is one of many REST endpoints that are available
+			method: "GET",
+                        dataType: "json",
+			data: {},
+			success: function (user) { //print message response information to the console
+			console.log("User request was successful.");
+			console.dir(user);
+			},
+			error: function (user) {
+			console.error("There was an error with the request.");
+			}
+		});
+}
+
+
+if (localStorage['token'] == null) {
+    yam.getLoginStatus(
+        function (response) {
+            if (response.authResponse) {
+                console.log("Logged in without setAuthToken");
+                console.dir(response);
+                getCurrentUserFromYammer();
+            }
+            else {
+                console.log("Need to log in.");
+                yam.login(function (response) {
+                    if (response.authResponse) {
+                        localStorage["token"] = response.access_token.token;
+                        console.dir(response);
+                        getCurrentUserFromYammer();
+                    }
+                });
+            }
+        }
+    );
+} else {
+    yam.getLoginStatus(
+    yam.platform.setAuthToken(localStorage["token"]),
+    function (response) {
+        if (response.authResponse) {
+            console.log("Logged in using setAuthToken");
+            console.dir(response);
+            getCurrentUserFromYammer();
+        }
+        else {
+            console.log("Need to log in.");
+                yam.login(function (response) {
+                    if (response.authResponse) {
+                        localStorage["token"] = response.access_token.token;
+                        console.dir(response);
+                        getCurrentUserFromYammer();
+                    }
+                });
+            }
+        }
+    );
+}
+
+</script>
+
+</body>
+
+</html>
